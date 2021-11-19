@@ -1,6 +1,6 @@
 from project import app
-
 from flask import Flask , request , render_template
+
 import psycopg2
 
 conn = psycopg2.connect(
@@ -10,23 +10,29 @@ conn = psycopg2.connect(
     user=app.config["DB_USER"],
     password = app.config["DB_PASSWORD"])
 
+user = ["susira","tulapongsa"]
+
 @app.route('/')
 def index():
+    if user == [] :
+        return login() 
+    
     cur = conn.cursor()
     s = "SELECT email,first_name,last_name,user_id FROM info_user"
     cur.execute(s)
     list_users = cur.fetchall()
-    return render_template('index.html', list_users = list_users)
+    return render_template('index.html', list_users = list_users , user = user)
 
 
 @app.route('/login')
 def login():
-    return render_template('login.html') 
+    user = []
+    return render_template('login.html',title='Login') 
 
 
 @app.route('/register')
 def register():
-    return render_template('register.html') 
+    return render_template('register.html',title='Register') 
 
 
 @app.route('/getRegis')
