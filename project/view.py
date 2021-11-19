@@ -35,6 +35,24 @@ def register():
     return render_template('register.html',title='Register') 
 
 
-@app.route('/getRegis')
+@app.route('/getRegis', methods=["POST"])
 def getRegis():
-    return render_template('login.html') 
+    cursor = conn.cursor()
+    fname=request.form.get("fname")
+    lname=request.form.get("lname")
+    email=request.form.get("email")
+    password=request.form.get("password")
+    passwordcon=request.form.get("passwordcon")
+    if password != passwordcon :
+        return render_template('register.html',title='Register111')  
+    query = """INSERT INTO info_user(user_id, first_name, last_name, email ,pass)
+            VALUES(DEFAULT, %s ,%s ,%s , %s)"""
+    values = ( fname, lname, email, password)
+    cursor.execute(query, values)
+    cursor.close()
+
+
+ 
+    return register() 
+
+
