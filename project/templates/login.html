@@ -6,7 +6,16 @@
 
 <div class="card-body login-card-body">
   <p class="login-box-msg">Sign in to start your session</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <script type="text/javascript">
+        Swal.fire("{{message}}")
 
+      </script>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   <form action="{{url_for('userLogin')}}" method="post">
     <div class="input-group mb-3">
       <input type="email" name ="email" class="form-control" placeholder="Email">

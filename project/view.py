@@ -25,38 +25,50 @@ def index():
         print(list_users)
         cur.close
         return render_template('index.html', list_users = list_users , user = user)
-    except e :
+    except :
+        print(11)
         return render_template('index.html', list_users = list_users , user = user)
 
 
 @app.route('/login')
 def login():
+    global user
+    user = [] 
     return render_template('login.html',title='Login') 
 
 
 @app.route('/userLogin', methods=["POST"])
 def userLogin():
+    
+    global user
     if request.method == 'POST':
         email=request.form["email"]
         password=request.form["password"]
         if not email :
+            flash("Please check try again")
             return render_template('login.html',title='Login') 
         if not password :
+            flash("Please check try again")
             return render_template('login.html',title='Login') 
+        
         try :
             with conn: 
                 cur = conn.cursor()
                 query = "SELECT * FROM info_user WHERE email = '" + email + "' ;"
-                cur.execute(query)
-                global user
+                cur.execute(query)               
                 user = cur.fetchall()
                 cur.close
                 if sha256_crypt.verify(password,user[0][4]):
+                    
                     return index()
                 else :
-                    return login() 
-        except e :
-            return login() 
+                    flash("Please check try again")
+                    print(2)
+                    return render_template('login.html',title='Login') 
+        except :
+            flash("Please check try again")
+    
+            return render_template('login.html',title='Login') 
 
 
 @app.route('/register')
@@ -74,14 +86,21 @@ def getRegis():
         password=request.form["password"]
         passwordcon=request.form["passwordcon"]
         if not fname :
-            return render_template('register.html',title='Register111')  
+            flash("Please enter your first name")
+            return render_template('register.html',title='Register')  
         if not lname :
-            return render_template('register.html',title='Register111')  
+            flash("Please enter your last name")
+            return render_template('register.html',title='Register')  
         if not email :
-            return render_template('register.html',title='Register111')  
+            flash("Please enter your E-mail")
+            return render_template('register.html',title='Register')  
+        if not password :
+            flash("Please enter your password")
+            return render_template('register.html',title='Register')  
         if password != passwordcon  :
-            flash("The password don't match")
-            return render_template('register.html',title='Register111') 
+            flash("Please check your password")
+            return render_template('register.html',title='Register')
+         
         password = sha256_crypt.encrypt(password) 
         try :
             with conn: 
@@ -93,6 +112,7 @@ def getRegis():
                 conn.commit()
                 cur.close()
 
-                return register() 
-        except e :
-            return register() 
+                return render_template('login.html',title='Login') 
+        except :
+            flash("Please check try again")
+            return render_template('register.html',title='Register')

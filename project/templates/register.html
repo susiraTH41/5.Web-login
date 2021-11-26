@@ -3,7 +3,21 @@
 {% block content%}
 <div class="card-body register-card-body">
   <p class="login-box-msg">Register a new membership</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+      <script type="text/javascript">
+        Swal.fire({
+            icon: 'error',
+      
+            text: '{{message}}',
+            button: 'ok'
+          })
 
+      </script>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
   <form action="{{url_for('getRegis')}}" method="post" id="Regis" > 
     <div class="input-group mb-3">
       <input type="text" name="fname" class="form-control" placeholder="First name">
